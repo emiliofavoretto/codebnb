@@ -6,11 +6,13 @@ import { prisma } from '@lib/prisma';
 const colunas = [
     { title: 'Nome', dataIndex: 'nome' },
     { title: 'CPF', dataIndex: 'cpf' },
+    { title: 'Celular', dataIndex: 'celular' },
 ];
 
 const campos = [
     { name: 'nome', label: 'Nome' },
     { name: 'cpf', label: 'CPF' },
+    { name: 'celular', label: 'Celular' },
 ];
 
 export default async function Clientes({ searchParams }) {

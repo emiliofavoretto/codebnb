@@ -3,22 +3,38 @@ import Crud from '@components/Crud';
 import { prisma } from '@lib/prisma';
 
 const colunas = [
-    { title: 'Modelo', dataIndex: 'modelo' },
+    { title: 'Nome', dataIndex: 'nome' },
+    { title: 'Endereço', dataIndex: 'endereco' },
+    { title: 'Descrição', dataIndex: 'descricao' },
     { title: 'Cliente', dataIndex: 'cliente_nome' },
 ];
 
 export default async function Imoveis() {
     const [imoveis, clientes] = await Promise.all([
-        prisma.imoveis.findMany({ orderBy: { endereco: 'asc' }, include: { clientes: true } }),
-        prisma.clientes.findMany({ orderBy: { nome: 'asc' } }),
+        prisma.imoveis.findMany({ 
+            orderBy: { nome: 'asc' }, 
+            include: { clientes: true } 
+        }),
+        prisma.clientes.findMany({ 
+            orderBy: { nome: 'asc' } 
+        }),
     ]);
 
-    const registros = imoveis.map(({ cliente, ...imoveis }) => ({ ...imoveis, clientes_nome: clientes.nome }));
+    const registros = imoveis.map(({ clientes, ...imovel }) => ({ 
+        ...imovel, 
+        cliente_nome: clientes?.nome || 'Sem cliente' 
+    }));
 
     const campos = [
-        { name: 'modelo', label: 'Modelo' },
-        { name: 'cliente_id', label: 'Clientes', opcoes: clientes.map((c) => ({ value: c.id, label: c.nome })) },
+        { name: 'nome', label: 'Nome do Imóvel' },
+        { name: 'endereco', label: 'Endereço' },
+        { name: 'descricao', label: 'Descrição' },
+        { 
+            name: 'clientes_id', 
+            label: 'Cliente', 
+            opcoes: clientes.map((c) => ({ value: c.id, label: c.nome })) 
+        },
     ];
 
-    return <Crud titulo="Imoveis" {...{ colunas, campos, registros, salvar, excluir }} />;
+    return <Crud titulo="Imóveis" {...{ colunas, campos, registros, salvar, excluir }} />;
 }
